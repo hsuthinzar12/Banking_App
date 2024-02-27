@@ -24,8 +24,10 @@ public class UtilityDb {
             DateTimeFormatter formatStyle = DateTimeFormatter.ofPattern("YYYY-MM-dd HH:MM:ss");
             String transferTime = formatStyle.format(timeNow);
             System.out.println(transferTime);
+
             Connection connection = DriverManager.getConnection(url, dbuser, dbpassword);
             Statement statement = connection.createStatement();
+
             int status = statement.executeUpdate("insert into " +
                     "histories(senderName, receiverName, senderPhone, receiverPhone,transferTime,amount) " +
                     "values ('" + senderName + "', '" + receiverName + "','" + senderPhone + "','" + receiverPhone + "','" +
@@ -180,21 +182,20 @@ public class UtilityDb {
                 String senderName = senderInfo.getString("name");
                 String receiverName = receiverInfo.getString("name");
 
-                senderBalance = senderBalance - amount;
-                receiverBalance = receiverBalance + amount;
+                senderBalance -= amount;
+                receiverBalance += amount;
 
-                if (cashIntoAccount(sender, senderBalance) &&
-                        cashIntoAccount(receiver, receiverBalance)) {
+                if (cashIntoAccount(sender, senderBalance) && cashIntoAccount(receiver, receiverBalance)) {
                     recordHistory(sender, senderName, receiver, receiverName, amount);
                     return true;
                 }
                 return false;
             }
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
 
     public static void showTransferHistories(String phoneNumber) {
         JPanel historyPanel = new JPanel();

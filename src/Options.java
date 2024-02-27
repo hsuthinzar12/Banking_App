@@ -18,7 +18,7 @@ public class Options extends JFrame {
         this.isLoggedIn = isLoggedIn;
         setTitle("CW Pay");
 
-        setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Hsu\\Downloads\\Play-removebg-preview (1).png"));
+        setIconImage(Toolkit.getDefaultToolkit().getImage("image/Logo.png"));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(0, 0, screenSize.width, screenSize.height);
@@ -56,23 +56,23 @@ public class Options extends JFrame {
         contentPane.add(btnHistory);
 
         JLabel lblNewLabel = new JLabel("");
-        lblNewLabel.setIcon(new ImageIcon("C:\\Users\\Hsu\\Downloads\\Play-removebg-preview (1).png"));
+        lblNewLabel.setIcon(new ImageIcon("image/Logo.png"));
         lblNewLabel.setBounds(504, 10, 500, 177);
         contentPane.add(lblNewLabel);
 
         JLabel lblLogout = new JLabel("");
-        lblLogout.setIcon(new ImageIcon("C:\\Users\\Hsu\\Downloads\\icons8-logout-80.png"));
+        lblLogout.setIcon(new ImageIcon("image/logout.png"));
         lblLogout.setForeground(new Color(255, 255, 255));
         lblLogout.setFont(new Font("Tahoma", Font.PLAIN, 28));
         lblLogout.setBounds(1268, 45, 329, 120);
-       // backbtn.setBounds(1268, 10, 329, 133);
+        // backbtn.setBounds(1268, 10, 329, 133);
         contentPane.add(lblLogout);
 
         lblLogout.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                int confirm = JOptionPane.showConfirmDialog(null,"Are you sure to logout ? ", "Log Out",JOptionPane.YES_NO_OPTION);
-                if (confirm == JOptionPane.YES_OPTION){
+                int confirm = JOptionPane.showConfirmDialog(null, "Are you sure to logout ? ", "Log Out", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
                     Login login = new Login();
                     login.setVisible(true);
                     dispose();
@@ -214,43 +214,86 @@ public class Options extends JFrame {
 
     // To transfer
     private void transfer() {
-        JTextField senderField = new JTextField(loggedInPhone, 10);
-        JTextField receiverField = new JTextField(10);
+        JTextField receiverPhoneField = new JTextField(10);
+        JTextField receiverNameField = new JTextField(10);
         JTextField amountField = new JTextField(10);
-        JPasswordField pswField = new JPasswordField(10);
+        JPasswordField passwordField = new JPasswordField(10);
 
-        JPanel panel = new JPanel(new GridLayout(0, 1));
-        panel.add(new JLabel("Sender's phone number:"));
-        panel.add(senderField);
-        panel.add(new JLabel("Enter receiver's phone number:"));
-        panel.add(receiverField);
-        panel.add(new JLabel("Enter amount to transfer:"));
-        panel.add(amountField);
-        panel.add(new JLabel("Enter your password:"));
-        panel.add(pswField);
+        JPanel panel1 = new JPanel(new GridLayout(0, 1));
+        panel1.add(new JLabel("Enter receiver's phone number:"));
+        panel1.add(receiverPhoneField);
 
-        int result = JOptionPane.showConfirmDialog(null, panel, "Transfer", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        int result1 = JOptionPane.showConfirmDialog(null, panel1, "Transfer", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
-        if (result == JOptionPane.OK_OPTION) {
-            String sender = senderField.getText();
-            String receiver = receiverField.getText();
-            String amountStr = amountField.getText();
-            String password = new String(pswField.getPassword());
+        if (result1 == JOptionPane.OK_OPTION) {
+            String receiverPhone = receiverPhoneField.getText();
 
+            ResultSet receiverData = UtilityDb.retrieveData(receiverPhone);
             try {
-                double amount = Double.parseDouble(amountStr);
-                if (UtilityDb.checkUserLogIn(sender, password)) {
-                    boolean success = UtilityDb.transferBalance(sender, receiver, amount);
-                    if (success) {
-                        JOptionPane.showMessageDialog(null, "Successfully transferred " + amount + " mmk to " + receiver);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Fail to transfer. Please check you input again");
+                if (receiverData.next()) {
+                    String receiverName = receiverData.getString("name");
+                    receiverNameField.setText(receiverName);
+                    receiverNameField.setEditable(false);
+
+                    JPanel panel2 = new JPanel(new GridLayout(0, 1));
+                    panel2.add(new JLabel("Receiver's Name:"));
+                    panel2.add(receiverNameField);
+                    panel2.add(new JLabel("Receiver's Phone Number:"));
+                    panel2.add(new JLabel(receiverPhone));
+                    panel2.add(new JLabel("Enter amount to transfer:"));
+                    panel2.add(amountField);
+
+                    int result2 = JOptionPane.showConfirmDialog(null, panel2, "Transfer", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+                    if (result2 == JOptionPane.OK_OPTION) {
+                        String amountStr = amountField.getText();
+                        try {
+                            double amount = Double.parseDouble(amountStr);
+
+                            String confirmationMessage = "Are you sure to transfer " + amount + " mmk to " + receiverName + " (" + receiverPhone + ")?";
+                            int confirmTransfer = JOptionPane.showConfirmDialog(null, confirmationMessage, "Check to transfer", JOptionPane.YES_NO_OPTION);
+
+                            if (confirmTransfer == JOptionPane.YES_OPTION) {
+                                ResultSet userData = UtilityDb.retrieveData(loggedInPhone);
+
+                                if (userData.next()) {
+                                    double userBalance = userData.getDouble("balance");
+
+                                    if (userBalance >= amount) {
+                                        JPanel panel3 = new JPanel(new GridLayout(0, 1));
+                                        panel3.add(new JLabel("Enter your password:"));
+                                        panel3.add(passwordField);
+
+                                        int result3 = JOptionPane.showConfirmDialog(null, panel3, "Password Verification", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+                                        if (result3 == JOptionPane.OK_OPTION) {
+                                            String password = new String(passwordField.getPassword());
+
+                                            if (UtilityDb.checkUserLogIn(loggedInPhone, password)) {
+                                                boolean success = UtilityDb.transferBalance(loggedInPhone, receiverPhone, amount);
+                                                if (success) {
+                                                    JOptionPane.showMessageDialog(null, "Transfer successful!");
+                                                } else {
+                                                    JOptionPane.showMessageDialog(null, "Transfer failed. Please try again.");
+                                                }
+                                            } else {
+                                                JOptionPane.showMessageDialog(null, "Incorrect password. Transfer aborted.");
+                                            }
+                                        }
+                                    } else {
+                                        JOptionPane.showMessageDialog(null, "Insufficient amount to transfer.");
+                                    }
+                                }
+                            }
+                        } catch (NumberFormatException e) {
+                            JOptionPane.showMessageDialog(null, "Invalid amount format. Please enter a valid number.");
+                        }
                     }
                 } else {
-                    JOptionPane.showMessageDialog(null, "Incorrect password.");
+                    JOptionPane.showMessageDialog(null, "Receiver with phone number " + receiverPhone + " does not exist.");
                 }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Invalid amount format. Please enter a valid number.");
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage());
             }
         }
     }

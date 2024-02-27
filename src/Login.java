@@ -18,9 +18,6 @@ public class Login extends JFrame {
     private boolean isLoggedIn = false;
     private String loggedInPhone = "";
 
-    /**
-     * Launch the application.
-     */
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -34,12 +31,10 @@ public class Login extends JFrame {
         });
     }
 
-    /**
-     * Create the frame.
-     */
     public Login() {
+
         setTitle("CW Pay");
-        setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Hsu\\Downloads\\Play-removebg-preview (1).png"));
+        setIconImage(Toolkit.getDefaultToolkit().getImage("image/Logo.png"));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(0, 0, screenSize.width, screenSize.height);
@@ -52,7 +47,7 @@ public class Login extends JFrame {
         contentPane.setLayout(null);
 
         JLabel lblNewLabel = new JLabel("");
-        lblNewLabel.setIcon(new ImageIcon("C:\\Users\\Hsu\\Downloads\\Play-removebg-preview.png"));
+        lblNewLabel.setIcon(new ImageIcon("image/Logo.png"));
         lblNewLabel.setForeground(new Color(255, 255, 255));
         lblNewLabel.setFont(new Font("Consolas", Font.BOLD, 50));
         lblNewLabel.setBounds(565, 21, 492, 206);
@@ -139,7 +134,7 @@ public class Login extends JFrame {
         lblforgotPsw.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                JOptionPane.showMessageDialog(null, "Relax and try to remember your password","Forgot Password",JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Relax and try to remember your password", "Forgot Password", JOptionPane.INFORMATION_MESSAGE);
             }
         });
 
@@ -158,7 +153,7 @@ public class Login extends JFrame {
         String password = txtpsw.getText();
 
         if (phone.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Please fill in both the phone number and password","Error",JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Please fill in both the phone number and password", "Error", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         if (UtilityDb.checkPhNumber(phone)) {
@@ -168,10 +163,10 @@ public class Login extends JFrame {
                 loggedInPhone = phone;
                 openOptionsPage(phone);
             } else {
-                JOptionPane.showMessageDialog(null, "Incorrect password. Try again.","Error",JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Incorrect password. Try again.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         } else {
-            JOptionPane.showMessageDialog(null, "Phone number does not exist. Please sign up.","Sign Up",JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Phone number does not exist. Please sign up.", "Sign Up", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

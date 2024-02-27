@@ -31,7 +31,7 @@ public class SignUp extends JFrame {
      * Create the frame.
      */
     public SignUp() {
-        setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Hsu\\Downloads\\Play-removebg-preview (1).png"));
+        setIconImage(Toolkit.getDefaultToolkit().getImage("image/Logo.png"));
         setTitle("CW Pay");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -45,7 +45,7 @@ public class SignUp extends JFrame {
         contentPane.setLayout(null);
 
         JLabel lblNewLabel = new JLabel("");
-        lblNewLabel.setIcon(new ImageIcon("C:\\Users\\Hsu\\Downloads\\Play-removebg-preview (1).png"));
+        lblNewLabel.setIcon(new ImageIcon("image/Logo.png"));
         lblNewLabel.setBounds(544, -14, 500, 177);
         contentPane.add(lblNewLabel);
 
@@ -177,7 +177,7 @@ public class SignUp extends JFrame {
         panel.add(txtType);
 
         JLabel backbtn = new JLabel("");
-        backbtn.setIcon(new ImageIcon("C:\\Users\\Hsu\\Downloads\\icons8-back-80.png"));
+        backbtn.setIcon(new ImageIcon("image/back.png"));
         backbtn.setBounds(1268, 10, 329, 133);
         contentPane.add(backbtn);
 
